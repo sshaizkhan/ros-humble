@@ -1,0 +1,7 @@
+ros-humble-moveit-setup-app-plugins
+ros-humble-moveit-setup-srdf-plugins
+ros-humble-moveit-planners
+ros-humble-desktop
+ros-humble-moveit-setup-assistant
+ros-humble-desktop-full
+ros-humble-moveit

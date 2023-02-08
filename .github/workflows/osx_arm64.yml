@@ -1,0 +1,46 @@
+jobs:
+  stage_0_job_0:
+    name: moveit-setup-app-plugins moveit-setup-srdf-plugins moveit-planners desktop
+    runs-on: macOS-11
+    strategy:
+      fail-fast: false
+    needs: []
+    steps:
+    - name: Checkout code
+      uses: actions/checkout@v3
+    - name: Build ros-humble-moveit-setup-app-plugins ros-humble-moveit-setup-srdf-plugins
+        ros-humble-moveit-planners ros-humble-desktop
+      env:
+        ANACONDA_API_TOKEN: ${{ secrets.ANACONDA_API_TOKEN }}
+        CURRENT_RECIPES: ros-humble-moveit-setup-app-plugins ros-humble-moveit-setup-srdf-plugins
+          ros-humble-moveit-planners ros-humble-desktop
+      run: |
+        export CI=azure
+        export GIT_BRANCH=$BUILD_SOURCEBRANCHNAME
+        export FEEDSTOCK_NAME=$(basename ${BUILD_REPOSITORY_NAME})
+        .scripts/build_osx_arm64.sh
+  stage_1_job_1:
+    name: moveit-setup-assistant desktop-full moveit
+    runs-on: macOS-11
+    strategy:
+      fail-fast: false
+    needs:
+    - stage_0_job_0
+    steps:
+    - name: Checkout code
+      uses: actions/checkout@v3
+    - name: Build ros-humble-moveit-setup-assistant ros-humble-desktop-full ros-humble-moveit
+      env:
+        ANACONDA_API_TOKEN: ${{ secrets.ANACONDA_API_TOKEN }}
+        CURRENT_RECIPES: ros-humble-moveit-setup-assistant ros-humble-desktop-full
+          ros-humble-moveit
+      run: |
+        export CI=azure
+        export GIT_BRANCH=$BUILD_SOURCEBRANCHNAME
+        export FEEDSTOCK_NAME=$(basename ${BUILD_REPOSITORY_NAME})
+        .scripts/build_osx_arm64.sh
+name: build_osx
+on:
+  push:
+    branches:
+    - buildbranch_osx_arm64
